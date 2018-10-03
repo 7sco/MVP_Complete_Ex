@@ -1,0 +1,36 @@
+1. Add dependency
+    testImplementation 'org.mockito:mockito-core:2.18.3'
+
+2. Create Test file at (Test) package
+    PresenterUnitTest: Will test presenter
+
+3. Configure Method with annotation @Before
+    Every time we execute a test execute method before the test (Configuration Test)
+    Restablish state of any object which will be use in the test to make sure object is clean and not changed by other test
+    Can be seen as constructor
+    Repeats for each method with @Before
+
+4. Presenter requires a view and a model
+    We will simulate the object using mockito at execution time
+
+    LoginActivityMVP.Model model;
+    LoginActivityMVP.View view;
+    (Interfaces will be mock, they dont need a concrete implementation, they only need a reference that exsist a model that comforms the object)
+    (User indicate what is to be returned when method gets called)
+
+5. Use mocked(name) to identify mocked objects. ex. mockedModel
+6. Simulate objects with mockito
+
+ex. mock(classToBeSimulated)
+    mockedModel= mock(LoginActivityMVP.Model.class);
+
+    mock = simulate
+
+7. We can use as a normal object
+    We can ask to return things and to do others
+
+
+8. ---
+
+9. Create test after everything is set up
+    name = noExistInteractionWithView()
