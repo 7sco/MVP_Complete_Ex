@@ -33,4 +33,4 @@ ex. mock(classToBeSimulated)
 8. ---
 
 9. Create test after everything is set up
-    name = noExistInteractionWithView()
+    name = git config user.name
