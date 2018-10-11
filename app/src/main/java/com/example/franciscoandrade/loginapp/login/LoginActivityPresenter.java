@@ -38,7 +38,8 @@ public class LoginActivityPresenter implements LoginActivityMVP.Presenter {
         User user= model.getUser();
         if (user==null){
             if (view != null){
-                //view.showUserNotAvailable();
+                //Comment to Test
+                view.showUserNotAvailable();
             }
         }else {
             if (view != null){
