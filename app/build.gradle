@@ -18,6 +18,11 @@ android {
     }
 }
 
+ext{
+    retrofitVersion  = '2.4.0'
+    gsonVersion  = '2.8.4'
+}
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:28.0.0-rc02'
@@ -39,4 +44,13 @@ dependencies {
     //test
     testImplementation 'org.mockito:mockito-core:2.18.3'
 
+    //Interaction with APIs Rest
+    implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
+
+    //Parse de JSON
+    implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
+    implementation "com.google.code.gson:gson:$gsonVersion"
+
+    //Logging HTTP
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.11.0'
 }
