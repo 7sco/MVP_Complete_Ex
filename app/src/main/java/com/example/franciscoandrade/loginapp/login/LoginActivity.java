@@ -2,18 +2,27 @@ package com.example.franciscoandrade.loginapp.login;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.franciscoandrade.loginapp.R;
+import com.example.franciscoandrade.loginapp.http.TwitchApi;
+import com.example.franciscoandrade.loginapp.http.twitch.Data;
+import com.example.franciscoandrade.loginapp.http.twitch.Twitch;
 import com.example.franciscoandrade.loginapp.root.App;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity implements LoginActivityMVP.View {
 
@@ -27,6 +36,9 @@ public class LoginActivity extends AppCompatActivity implements LoginActivityMVP
     @Inject
     LoginActivityMVP.Presenter presenter;
 
+    @Inject
+    TwitchApi twitchApi;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,6 +46,23 @@ public class LoginActivity extends AppCompatActivity implements LoginActivityMVP
         ButterKnife.bind(this);
 
         ((App) getApplicationContext()).getComponent().inject(this);
+
+        //Use of Twitch Api with retrofit
+        Call<Twitch> call = twitchApi.getTopGames("YOUR ID HERE");
+        call.enqueue(new Callback<Twitch>() {
+            @Override
+            public void onResponse(Call<Twitch> call, Response<Twitch> response) {
+                List<Data> topGames =response.body().getData();
+                for (Data game:topGames){
+                    Log.d("Games=", "onResponse: "+ game);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Twitch> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
     }
 
 
