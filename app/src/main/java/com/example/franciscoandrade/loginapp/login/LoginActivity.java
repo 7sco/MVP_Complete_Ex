@@ -15,11 +15,20 @@ import com.example.franciscoandrade.loginapp.root.App;
 
 import java.util.List;
 
+
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
+import io.reactivex.functions.Predicate;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -47,22 +56,66 @@ public class LoginActivity extends AppCompatActivity implements LoginActivityMVP
 
         ((App) getApplicationContext()).getComponent().inject(this);
 
-        //Use of Twitch Api with retrofit
-        Call<Twitch> call = twitchApi.getTopGames("YOUR ID HERE");
-        call.enqueue(new Callback<Twitch>() {
+        //Use of Twitch Api with retrofit non Reactive
+//        Call<Twitch> call = twitchApi.getTopGames("YOUR ID HERE");
+//        call.enqueue(new Callback<Twitch>() {
+//            @Override
+//            public void onResponse(Call<Twitch> call, Response<Twitch> response) {
+//                List<Data> topGames =response.body().getData();
+//                for (Data game:topGames){
+//                    Log.d("Games=", "onResponse: "+ game);
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<Twitch> call, Throwable t) {
+//                t.printStackTrace();
+//            }
+//        });
+
+        twitchApi.getTopGamesObservable("5gzdikii6y7s4sxhz1qtkd6wff90cv").flatMap(new Function<Twitch, ObservableSource<Data>>() {
             @Override
-            public void onResponse(Call<Twitch> call, Response<Twitch> response) {
-                List<Data> topGames =response.body().getData();
-                for (Data game:topGames){
-                    Log.d("Games=", "onResponse: "+ game);
+            public ObservableSource<Data> apply(Twitch twitch){
+
+                return Observable.fromIterable(twitch.getData());
+            }
+            }).flatMap(new Function<Data, Observable<String>>() {
+                @Override
+                public Observable<String> apply(Data data) {
+                    return Observable.just(data.getName());
                 }
+            }).filter(new Predicate<String>() {
+            @Override
+            public boolean test(String s) throws Exception {
+                return s.contains("w") || s.contains("W");
+            }
+        })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<String>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+                Log.d("GAMEST**", "onSubscribe: ");
             }
 
             @Override
-            public void onFailure(Call<Twitch> call, Throwable t) {
-                t.printStackTrace();
+            public void onNext(String name) {
+                Log.d("GAMEST**", "onNext: "+ name);
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onComplete() {
+                Log.d("GAMEST**", "onComplete: ");
+
             }
         });
+
     }
 
 
